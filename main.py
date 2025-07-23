@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 # إعدادات البوت
 BOT_TOKEN = '7961048427:AAFjlXzCR9F7W4QK2k4S5Iw3COnZlbtlq4Y'
-CHAT_ID = '7961048427'
+CHAT_ID = '1208587005'
 
 # دالة إرسال رسالة لتلقرام
 def send_to_telegram(message):
