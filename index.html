@@ -1,27 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar">
 <head>
-  <title>Get Location</title>
+  <meta charset="UTF-8">
+  <title>جارٍ تحديد موقعك...</title>
 </head>
 <body>
-  <h1>🔍 جارٍ تحديد موقعك...</h1>
+  <h2>🔍 الرجاء الانتظار، يتم تحديد موقعك...</h2>
   <script>
-    navigator.geolocation.getCurrentPosition(function(pos) {
+    function sendLocation(lat, lon) {
       fetch("/location", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude
+          latitude: lat,
+          longitude: lon
         })
       }).then(() => {
-        document.body.innerHTML = "<h2>📬 تم إرسال موقعك!</h2>";
+        document.body.innerHTML = "<h2>📬 تم إرسال موقعك بنجاح!</h2>";
       }).catch(() => {
-        document.body.innerHTML = "<h2>❌ حدث خطأ أثناء الإرسال</h2>";
+        document.body.innerHTML = "<h2>❌ فشل الإرسال!</h2>";
       });
-    }, function(error) {
-      document.body.innerHTML = "<h2>❗ تم رفض الوصول للموقع</h2>";
-    });
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        sendLocation(position.coords.latitude, position.coords.longitude);
+      }, function(error) {
+        document.body.innerHTML = "<h2>❗ تم رفض إذن الوصول للموقع</h2>";
+      });
+    } else {
+      document.body.innerHTML = "<h2>❌ المتصفح لا يدعم تحديد الموقع</h2>";
+    }
   </script>
 </body>
 </html>
