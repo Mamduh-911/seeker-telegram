@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Get Location</title>
+</head>
+<body>
+  <h1>🔍 جارٍ تحديد موقعك...</h1>
+  <script>
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      fetch("/location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude
+        })
+      }).then(() => {
+        document.body.innerHTML = "<h2>📬 تم إرسال موقعك!</h2>";
+      }).catch(() => {
+        document.body.innerHTML = "<h2>❌ حدث خطأ أثناء الإرسال</h2>";
+      });
+    }, function(error) {
+      document.body.innerHTML = "<h2>❗ تم رفض الوصول للموقع</h2>";
+    });
+  </script>
+</body>
+</html>
